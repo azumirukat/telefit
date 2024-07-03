@@ -202,13 +202,8 @@ button {
     border-radius: 0.25rem;
 }
 
-.flex {
-    display: flex;
-    justify-content: space-between;
-}
-
-.items-center {
-    align-items: center;
+.hidden {
+    display: none;
 }
 
 footer {
@@ -223,6 +218,33 @@ footer p {
     color: #666;
 }
 
-.hidden {
-    display: none;
+/* Additional styles for form */
+.shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.focus\:outline-none:focus {
+    outline: 0;
+}
+
+.focus\:shadow-outline:focus {
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.leading-tight {
+    line-height: 1.25;
+}
+
+.appearance-none {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
