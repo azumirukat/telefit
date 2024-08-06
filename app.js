@@ -16,10 +16,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Import routes
+const authRoutes = require('./routes/auth');
+
+// Use the auth routes at the root level
+app.use('/', authRoutes);
+
 // Routes
 app.use('/', require('./routes/index'));
-app.use('/login', require('./routes/login'));
-app.use('/signup', require('./routes/signup'));
+
+//app.use('/login', require('./routes/auth'));
+//app.use('/signup', require('./routes/auth'));
 app.use('/bmi', require('./routes/bmi'));
 app.use('/calorie', require('./routes/calorie'));
 app.use('/progress', require('./routes/progress'));
