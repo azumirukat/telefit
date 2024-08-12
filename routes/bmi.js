@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.render('bmi-calculator', { title: 'BMI Calculator' });
+router.get('/bmi', (req, res) => {
+    res.render('base', { title: 'BMI Calculator', content: 'bmi-calculator' });
 });
 
 router.post('/calculate', (req, res) => {

@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.render('progress', { title: 'Progress' });
+
+router.get('/progress', (req, res) => {
+    res.render('base', { title: 'Progress Tracker', content: 'progress' });
 });
 
 module.exports = router;

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.render('calorie-calculator', { title: 'Calorie Counter' });
+router.get('/calorie', (req, res) => {
+    res.render('base', { title: 'Calorie Calculator', content: 'calorie-calculator' });
 });
+
 
 router.post('/upload', (req, res) => {
     // Handle image upload and analysis here

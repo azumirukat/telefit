@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
+const User = require('../models/Users');
 
 // Serve the sign-up page
 router.get('/signup', (req, res) => {
@@ -9,9 +10,8 @@ router.get('/signup', (req, res) => {
 
 // Serve the login page
 router.get('/login', (req, res) => {
-    res.render('login', { title: 'Login' });
+    res.render('base', { title: 'Login', content: 'login' });
 });
-
 // Handle Telegram OAuth callback
 router.get('/telegram', async (req, res) => {
     try {

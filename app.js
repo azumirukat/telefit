@@ -3,8 +3,10 @@ const express = require('express');
 const multer = require('multer');
 const axios = require('axios');
 const Clarifai = require('clarifai');
+const mongoose = require('mongoose');
 const sharp = require('sharp');
 const path = require('path');
+const connectDB = require('./db');
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -17,20 +19,20 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Import routes
-const authRoutes = require('./routes/auth');
+//const authRoutes = require('./routes/auth');
 
 // Use the auth routes at the root level
-app.use('/', authRoutes);
+app.use('/', require('./routes/auth'));
 
 // Routes
 app.use('/', require('./routes/index'));
+app.use('/', require('./routes/bmi'));
+app.use('/', require('./routes/calorie'));
+app.use('/', require('./routes/progress'));
+app.use('/', require('./routes/workout'));
 
-//app.use('/login', require('./routes/auth'));
-//app.use('/signup', require('./routes/auth'));
-app.use('/bmi', require('./routes/bmi'));
-app.use('/calorie', require('./routes/calorie'));
-app.use('/progress', require('./routes/progress'));
-app.use('/workout', require('./routes/workout'));
+//connect to db
+connectDB();
 
 // Helper function to preprocess image
 async function preprocessImage(buffer) {
