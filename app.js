@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const multer = require('multer');
 const axios = require('axios');
 const Clarifai = require('clarifai');
@@ -12,27 +13,36 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 const clarifaiApp = new Clarifai.App({ apiKey: process.env.CLARIFAI_API_KEY });
 
+// Connect to MongoDB
+connectDB();
+
+// Set up session management - this should be done before defining any routes
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'TeleFit', // Replace with a real secret in production
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to true if using HTTPS
+}));
+
+// Middleware for parsing requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Set view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Import routes
-//const authRoutes = require('./routes/auth');
-
-// Use the auth routes at the root level
+// Ensure session middleware is set before these routes
 app.use('/', require('./routes/auth'));
-
-// Routes
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/bmi'));
 app.use('/', require('./routes/calorie'));
 app.use('/', require('./routes/progress'));
 app.use('/', require('./routes/workout'));
-
-//connect to db
-connectDB();
 
 // Helper function to preprocess image
 async function preprocessImage(buffer) {
