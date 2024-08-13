@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const multer = require('multer');
 const axios = require('axios');
 const Clarifai = require('clarifai');
@@ -17,11 +17,10 @@ const clarifaiApp = new Clarifai.App({ apiKey: process.env.CLARIFAI_API_KEY });
 connectDB();
 
 // Set up session management - this should be done before defining any routes
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'TeleFit', // Replace with a real secret in production
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true } // Set to true if using HTTPS
+app.use(cookieSession({
+  name: 'session',
+  keys: [process.env.SESSION_SECRET || 'TeleFit'], // Secret keys for signing cookies
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
 // Middleware for parsing requests
