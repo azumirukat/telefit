@@ -21,7 +21,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'TeleFit', // Replace with a real secret in production
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Set to true if using HTTPS
+  cookie: { secure: true } // Set to true if using HTTPS
 }));
 
 // Middleware for parsing requests
