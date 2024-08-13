@@ -2,7 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const router = express.Router();
-const User = require('../models/Users'); // Ensure the path to your User model is correct
+const User = require('../models/Users'); 
 
 // Serve the sign-up page with a Telegram login button
 router.get('/signup', (req, res) => {
@@ -32,7 +32,7 @@ router.post('/signup/email', async (req, res) => {
         await user.save();
 
         // Store the user's ID in the session
-        req.session.userId = user._id.toString();
+        req.session.user = user;
 
         // Redirect to dashboard after successful registration
         console.log(req.session);
@@ -65,7 +65,7 @@ router.post('/login/email', async (req, res) => {
         }
 
         // Store the user's ID in the session
-        req.session.userId = user._id.toString();
+        req.session.user = user;
         console.log(req.session);
         res.redirect('/dashboard');
     } catch (error) {
@@ -110,7 +110,7 @@ router.get('/telegram/signup-callback', async (req, res) => {
         }
 
         // If user exists, log them in by setting the session
-        req.session.userId = user._id.toString();
+        req.session.user = user;
         console.log(req.session);
         res.redirect('/dashboard');
     } catch (error) {
@@ -146,7 +146,7 @@ router.get('/telegram/login-callback', async (req, res) => {
         }
 
         // Log them in by setting the session
-        req.session.userId = user._id.toString();
+        req.session.user = user;
         console.log(req.session);
         res.redirect('/dashboard');
     } catch (error) {
@@ -188,7 +188,7 @@ router.post('/complete-registration', async (req, res) => {
         );
 
         // Store the user's ID in the session and clear userInfo
-        req.session.userId = user._id.toString();
+        req.session.user = user;
         delete req.session.userInfo; // Clear the temporary session data
 
         console.log(req.session);
@@ -198,5 +198,16 @@ router.post('/complete-registration', async (req, res) => {
         res.status(500).send('Error completing registration');
     }
 });
+
+router.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send('Error logging out');
+        }
+        res.clearCookie('connect.sid'); // Clear the session cookie
+        res.redirect('/login'); // Redirect to login page
+    });
+});
+
 
 module.exports = router;

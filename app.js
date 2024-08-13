@@ -31,6 +31,14 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Middleware to make session data available to all views
+app.use((req, res, next) => {
+  // Store session information in res.locals
+  res.locals.user = req.session.user|| null; // User ID from session
+  res.locals.userInfo = req.session.userInfo || null; // Other user info if stored
+  next();
+});
+
 // Set view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
