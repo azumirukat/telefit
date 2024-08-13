@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss -i ./public/css/styles.css -o ./public/css/tailwind.css",
-    "postinstall": "npm rebuild bcrypt --build-from-source"
+    "build:css": "npx tailwindcss -i ./public/css/styles.css -o ./public/css/tailwind.css"
   },
   "keywords": [],
   "author": "",
