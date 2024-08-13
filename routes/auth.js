@@ -1,6 +1,6 @@
 const express = require('express');
 const crypto = require('crypto');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const router = express.Router();
 const User = require('../models/Users'); 
 
@@ -189,7 +189,7 @@ router.post('/complete-registration', async (req, res) => {
 
         // Store the user's ID in the session and clear userInfo
         req.session.user = user;
-        delete req.session.userInfo; // Clear the temporary session data
+        req.session.userInfo = null; // Clear the temporary session data
 
         console.log(req.session);
         res.redirect('/dashboard');
@@ -200,13 +200,8 @@ router.post('/complete-registration', async (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).send('Error logging out');
-        }
-        res.clearCookie('connect.sid'); // Clear the session cookie
-        res.redirect('/login'); // Redirect to login page
-    });
+    req.session = null; // Clear session data
+    res.redirect('/login'); // Redirect to the login page
 });
 
 
