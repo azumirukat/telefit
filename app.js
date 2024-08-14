@@ -50,7 +50,6 @@ app.use('/', require('./routes/bmi'));
 app.use('/', require('./routes/calorie'));
 app.use('/', require('./routes/progress'));
 app.use('/', require('./routes/workout'));
-app.use('/', require('./routes/settings'));
 
 // Helper function to preprocess image
 async function preprocessImage(buffer) {
