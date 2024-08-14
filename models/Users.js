@@ -23,11 +23,7 @@ const UserSchema = new mongoose.Schema({
     },
     lastName: {
         type: String
-    },
-    photoUrl: {
-        type: String
     }
-    // Add any other fields as required
 });
 
 module.exports = mongoose.model('User', UserSchema);
