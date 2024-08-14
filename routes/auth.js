@@ -215,15 +215,15 @@ router.post('/settings/update', async (req, res) => {
             updates.password = await bcrypt.hash(password, salt);
         }
 
+
         await User.findByIdAndUpdate(req.session.user._id, updates);
 
+        const userUpdate = User.findById(req.session.user_id);
+
         req.session.user = {
-            _id: user._id,
-            username: user.username,
-            email: user.email,
-            telegramId: user.telegramId,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            username: updates.username,
+            email: updates.email,
+            password: updates.password
         };
 
         res.redirect('/settings');
@@ -236,6 +236,9 @@ router.post('/settings/update', async (req, res) => {
 router.post('/settings/unlink-telegram', async (req, res) => {
     try {
         await User.findByIdAndUpdate(req.session.user._id, { telegramId: null });
+        req.session.user= {
+            telegramId: null
+        };
         res.redirect('/settings');
     } catch (error) {
         console.error('Error unlinking Telegram:', error);
