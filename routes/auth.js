@@ -217,6 +217,15 @@ router.post('/settings/update', async (req, res) => {
 
         await User.findByIdAndUpdate(req.session.user._id, updates);
 
+        req.session.user = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            telegramId: user.telegramId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        };
+
         res.redirect('/settings');
     } catch (error) {
         console.error('Error updating user information:', error);
