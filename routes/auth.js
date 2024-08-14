@@ -36,7 +36,7 @@ router.post('/signup/email', async (req, res) => {
 
         // Redirect to dashboard after successful registration
         console.log(req.session);
-        res.redirect('/dashboard');
+        res.redirect('/');
     } catch (error) {
         console.error('Error during sign-up:', error);
         res.status(500).send('Server Error');
@@ -67,7 +67,7 @@ router.post('/login/email', async (req, res) => {
         // Store the user's ID in the session
         req.session.user = user;
         console.log(req.session);
-        res.redirect('/dashboard');
+        res.redirect('/');
     } catch (error) {
         console.error('Error during email login:', error);
         res.status(500).send('Server Error');
@@ -112,7 +112,7 @@ router.get('/telegram/signup-callback', async (req, res) => {
         // If user exists, log them in by setting the session
         req.session.user = user;
         console.log(req.session);
-        res.redirect('/dashboard');
+        res.redirect('/');
     } catch (error) {
         console.error('Error during Telegram sign-up:', error);
         res.status(500).send('Error during Telegram authentication');
@@ -148,7 +148,7 @@ router.get('/telegram/login-callback', async (req, res) => {
         // Log them in by setting the session
         req.session.user = user;
         console.log(req.session);
-        res.redirect('/dashboard');
+        res.redirect('/');
     } catch (error) {
         console.error('Error during Telegram login:', error);
         res.status(500).send('Error during Telegram authentication');
@@ -192,7 +192,7 @@ router.post('/complete-registration', async (req, res) => {
         req.session.userInfo = null; // Clear the temporary session data
 
         console.log(req.session);
-        res.redirect('/dashboard');
+        res.redirect('/');
     } catch (error) {
         console.error('Error completing registration:', error);
         res.status(500).send('Error completing registration');
