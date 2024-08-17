@@ -11,7 +11,7 @@ router.get('/signup', (req, res) => {
 
 // Handle Email Sign-Up (standard email registration)
 router.post('/signup/email', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { userName, email, password } = req.body;
     try {
         // Check if user already exists
         let user = await User.findOne({ email });
@@ -25,7 +25,7 @@ router.post('/signup/email', async (req, res) => {
 
         // Create and save the new user
         user = new User({
-            username,
+            userName,
             email,
             password: hashedPassword
         });
@@ -77,7 +77,7 @@ router.post('/login/email', async (req, res) => {
 // Handle Telegram OAuth callback for sign-up
 router.get('/telegram/signup-callback', async (req, res) => {
     try {
-        const { id, first_name, last_name, username, photo_url, auth_date, hash } = req.query;
+        const { id, first_name, last_name, username, hash } = req.query;
 
         // Validate the Telegram callback using a secret
         const dataCheckString = Object.keys(req.query)
@@ -102,8 +102,7 @@ router.get('/telegram/signup-callback', async (req, res) => {
                 telegramId: id,
                 firstName: first_name,
                 lastName: last_name,
-                username,
-                photoUrl: photo_url
+                username
             };
 
             return res.redirect('/complete-registration');
@@ -142,7 +141,8 @@ router.get('/telegram/login-callback', async (req, res) => {
         const user = await User.findOne({ telegramId: id });
 
         if (!user) {
-            return res.status(400).send('User not found. Please sign up first.');
+            return res.redirect('/signup');
+            //return res.status(400).send('User not found. Please sign up first.');
         }
 
         // Log them in by setting the session
@@ -171,8 +171,8 @@ router.post('/complete-registration', async (req, res) => {
             return res.status(400).send('User session data is missing. Please try the registration process again.');
         }
 
-        const { telegramId, firstName, lastName, username, photoUrl } = req.session.userInfo;
-        const { email } = req.body;
+        const { telegramId} = req.session.userInfo;
+        const { userName, email } = req.body;
 
         // Ensure the email is unique before updating
         let existingUser = await User.findOne({ email });
@@ -183,13 +183,13 @@ router.post('/complete-registration', async (req, res) => {
         // Create or update the user in the database
         const user = await User.findOneAndUpdate(
             { telegramId },
-            { email, firstName, lastName, username, photoUrl },
+            { userName, email},
             { new: true, upsert: true } // Create if doesn't exist
         );
 
         // Store the user's ID in the session and clear userInfo
+        req.session.userInfo = null;
         req.session.user = user;
-        req.session.userInfo = null; // Clear the temporary session data
 
         console.log(req.session);
         res.redirect('/');
@@ -207,31 +207,59 @@ router.get('/settings', (req, res) => {
 
 router.post('/settings/update', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        const updates = { username, email };
+        const { userName, email, password } = req.body;
+        const updates = { userName, email };
 
+        // If a new password is provided, hash it before saving
         if (password) {
             const salt = await bcrypt.genSalt(10);
             updates.password = await bcrypt.hash(password, salt);
         }
 
-
+        // Update the user in the database
         await User.findByIdAndUpdate(req.session.user._id, updates);
 
-        const userUpdate = User.findById(req.session.user_id);
+        // Corrected: Find the updated user by their _id
+        const userUpdate = await User.findOne({ _id: req.session.user._id });
 
-        req.session.user = {
-            username: updates.username,
-            email: updates.email,
-            password: updates.password
-        };
+        // Update the session with the new user information
+        req.session.user = userUpdate;
 
+        console.log(req.session);
+
+        // Redirect back to the settings page
         res.redirect('/settings');
     } catch (error) {
         console.error('Error updating user information:', error);
         res.status(500).send('Server Error');
     }
 });
+
+router.get('/telegram/callback', async (req, res) => {
+    try {
+        const { hash, ...data } = req.query;
+        const secret = crypto.createHash('sha256').update(process.env.TELEGRAM_BOT_TOKEN).digest();
+        const checkString = Object.keys(data).sort().map(key => (`${key}=${data[key]}`)).join('\n');
+        const hmac = crypto.createHmac('sha256', secret).update(checkString).digest('hex');
+
+        if (hmac !== hash) {
+            return res.status(403).send('Unauthorized');
+        }
+
+        // Link the Telegram account
+        const telegramId = data.id;
+        const user = await User.findByIdAndUpdate(req.session.user._id, {telegramId: telegramId}) ;
+
+        req.session.user = await User.findOne({_id : req.session.user._id});
+
+        // Redirect back to the settings page
+        res.redirect('/settings');
+    } catch (error) {
+        console.error('Error during Telegram login:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 router.post('/settings/unlink-telegram', async (req, res) => {
     try {
@@ -245,6 +273,7 @@ router.post('/settings/unlink-telegram', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
 
 router.get('/logout', (req, res) => {
     req.session = null; // Clear session data
