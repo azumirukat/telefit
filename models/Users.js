@@ -16,7 +16,13 @@ const UserSchema = new mongoose.Schema({
     },
     userName: {
         type: String
-    }
+    },
+    workoutRoutines: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'WorkoutRoutine'
+        }
+    ]
 });
 
 module.exports = mongoose.model('User', UserSchema);
