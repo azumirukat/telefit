@@ -30,7 +30,7 @@ async function analyzeImage(buffer) {
   // Use Clarifai for food recognition
   const clarifaiResponse = await clarifaiApp.models.predict(Clarifai.FOOD_MODEL, { base64: base64Image });
   const foodItems = clarifaiResponse.outputs[0].data.concepts
-    .filter(concept => concept.value > 0.85) // Apply confidence threshold
+    .filter(concept => concept.value > 0.97) // Apply confidence threshold
     .map(concept => concept.name);
 
   return foodItems;

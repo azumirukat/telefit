@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const workoutNameInput = document.getElementById("workout-name");
   const workoutSelector = document.getElementById("workout-selector");
 
-  let currentWorkoutId = null; // Keep track of the current workout ID
+  let currentWorkoutId = null; //keeps track of the current workout ID
 
-  // Event listener to load selected workout
+  //event listener to load selected workout from dropdown
   workoutSelector.addEventListener("change", function () {
     currentWorkoutId = this.value;
     //console.log(currentWorkoutId);
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
           if (data.success) {
             workoutNameInput.value = data.workout.name;
-            workoutTableBody.innerHTML = ""; // Clear existing rows
+            workoutTableBody.innerHTML = "";
 
             data.workout.exercises.forEach(function (exercise) {
               const row = workoutTableBody.insertRow();
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
               row.insertCell(4).innerHTML =
                 '<button class="delete-row-btn text-red-500">Delete</button>';
 
-              // Add event listener for the delete button in each row
+              //add buttons to delete rows from table
               row
                 .querySelector(".delete-row-btn")
                 .addEventListener("click", function () {
@@ -54,17 +54,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Event listener to create a new workout
+  //event listener to create a new workout
   document
     .getElementById("create-workout-btn")
     .addEventListener("click", function () {
       workoutNameInput.value = "";
       workoutTableBody.innerHTML = "";
       workoutSelector.selectedIndex = 0;
-      currentWorkoutId = null; // Clear the current workout ID when creating a new workout
+      currentWorkoutId = null; //clears the current workout ID when creating a new workout so it does not update a different workout
     });
 
-  // Function to add a new exercise row
+  //function to add a new exercise row
   document
     .getElementById("add-exercise-btn")
     .addEventListener("click", function () {
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
       row.insertCell(4).innerHTML =
         '<button class="delete-row-btn text-red-500">Delete</button>';
 
-      // Add event listener for the delete button in each row
+      //adds the event listener for the delete button in each row
       row
         .querySelector(".delete-row-btn")
         .addEventListener("click", function () {
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-  // Function to save the workout
+  //function to save the workout
   document
     .getElementById("save-workout-btn")
     .addEventListener("click", function () {
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Send the workout data to the server
+      //seends the workout data to the server
       fetch("/workout/save", {
         method: "POST",
         headers: {
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (data.success) {
             currentWorkoutId = data.workout._id;
             alert("Workout saved successfully!" + currentWorkoutId);
-            // Refresh the workout list after saving
+            //refreshes the workout list after saving
             updateWorkoutDropdown();
             workoutSelector.selectedIndex = currentWorkoutId;
           } else {
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-  // Function to delete the workout
+  //function to delete the workout
   document
     .getElementById("delete-workout-btn")
     .addEventListener("click", function () {
@@ -175,11 +175,10 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((data) => {
             if (data.success) {
               alert("Workout deleted successfully!");
-              workoutSelector.selectedIndex = 0; // Reset the selector
               workoutNameInput.value = "";
-              workoutTableBody.innerHTML = ""; // Clear the table
-              currentWorkoutId = null; // Clear the current workout ID
-              updateWorkoutDropdown(); // Refresh the dropdown list
+              workoutTableBody.innerHTML = ""; //clears the table
+              currentWorkoutId = null; //clears the current workout ID
+              updateWorkoutDropdown(); //refreshes the dropdown list
             } else {
               alert("Failed to delete workout.");
             }
@@ -190,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-  // Function to update the workout dropdown list
+  //function to update the workout dropdown list
   function updateWorkoutDropdown() {
     let index = 0;
     let count = 1;
@@ -208,14 +207,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (workout._id == currentWorkoutId) {
               index = count;
-              //console.log(workout._id + "HI" + index);
+              //console.log(workout._id + " " + index);
               //console.log(count);
             }
 
             count++;
           });
           workoutSelector.selectedIndex = index;
-          workoutSelector.dispatchEvent(new Event("change")); // Trigger the change event to load the workout
+          workoutSelector.dispatchEvent(new Event("change")); //trigger the change event to load the new workout
           console.log("There is a current workout id");
         } else {
           alert("Failed to update workout list.");
