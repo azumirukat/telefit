@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true
-    },
     email: {
         type: String,
         unique: true,
@@ -18,16 +14,15 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         sparse: true
     },
-    firstName: {
+    userName: {
         type: String
     },
-    lastName: {
-        type: String
-    },
-    photoUrl: {
-        type: String
-    }
-    // Add any other fields as required
+    workoutRoutines: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'WorkoutRoutine'
+        }
+    ]
 });
 
 module.exports = mongoose.model('User', UserSchema);
